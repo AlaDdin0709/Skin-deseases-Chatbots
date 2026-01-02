@@ -6,9 +6,6 @@
 models:
   llm:
     name: "google/flan-t5-xl"
-    # Adaptateur médical LoRA (optionnel - améliore précision dermatologique)
-    use_medical_adapter: false
-    adapter_path: "data/models/lora-dermatology"
     quantization:
       load_in_8bit: true        # 8-bit pour 4GB VRAM
       device_map: "auto"
