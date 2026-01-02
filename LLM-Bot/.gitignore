@@ -14,11 +14,13 @@ build/
 # Data & Models
 data/raw/*
 data/processed/*
-*.pkl
-*.bin
-*.pt
-*.pth
+!data/raw/.gitkeep
+!data/processed/.gitkeep
 models/
+*.pth
+*.pt
+*.bin
+*.safetensors
 
 # Environment
 .env
