@@ -40,8 +40,9 @@ class LLMService:
                 bnb_config = BitsAndBytesConfig(
                     load_in_8bit=True,
                     llm_int8_threshold=6.0,
+                    llm_int8_enable_fp32_cpu_offload=False  # Forcer GPU-only (risque OOM)
                 )
-                logger.info("⚙️  Using 8-bit quantization")
+                logger.info("⚙️  Using 8-bit quantization (GPU-only, no CPU offload)")
             else:
                 bnb_config = None
             
@@ -54,11 +55,12 @@ class LLMService:
             # Charger modèle
             max_memory = self.config.get('max_memory', {"0": "4GB", "cpu": "16GB"})
             
+            # Forcer device_map sur GPU uniquement
             self.model = AutoModelForSeq2SeqLM.from_pretrained(
                 model_name,
                 quantization_config=bnb_config,
-                device_map=self.config.get('device_map', 'auto'),
-                max_memory=max_memory,
+                device_map="cuda",
+                max_memory={0: "4GiB"},
                 trust_remote_code=True,
                 torch_dtype=torch.float16 if self.device == "cuda" else torch.float32
             )
