@@ -108,11 +108,11 @@ def test_phi3_vision():
         # Move inputs to same device as model
         inputs = {k: v.to(model.device) if hasattr(v, 'to') else v for k, v in inputs.items()}
         
-        logger.info("   Génération en cours...")
+        logger.info("   Génération en cours (peut prendre 1-2 min sans cache)...")
         with torch.no_grad():
             outputs = model.generate(
                 **inputs,
-                max_new_tokens=50,
+                max_new_tokens=10,  # Réduit pour test rapide
                 do_sample=False,
                 use_cache=False  # Désactiver cache pour compatibilité
             )
