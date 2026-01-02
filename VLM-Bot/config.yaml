@@ -1,0 +1,147 @@
+# ============================================================================
+# VLM-Bot Configuration
+# ============================================================================
+
+# Model Configuration
+models:
+  vlm:
+    # Phi-3-Vision: VLM compact (4.2B params) - RECOMMANDÉ pour 4GB VRAM
+    name: "microsoft/Phi-3-vision-128k-instruct"
+    model_type: "phi3_v"  # Architecture Phi-3 Vision
+    quantization:
+      load_in_4bit: true
+      bnb_4bit_compute_dtype: "float16"
+      bnb_4bit_use_double_quant: true
+      bnb_4bit_quant_type: "nf4"
+    device_map: "auto"
+    torch_dtype: "float16"
+    max_memory: 
+      0: "3.5GB"  # GPU 0 (plus d'espace car modèle 4.2B)
+      "cpu": "12GB"
+    trust_remote_code: true  # Required pour Phi-3
+    
+    # Alternatives testées:
+    # Med-Flamingo: architecture custom incompatible avec Transformers
+    # Llava 7B: trop gros, toujours en CPU sur 4GB VRAM
+  
+  embedding:
+    name: "sentence-transformers/all-MiniLM-L6-v2"
+    device: "cpu"
+
+# RAG Configuration
+rag:
+  dataset: "TimSchopf/medical_abstracts"
+  chunk_size: 500
+  chunk_overlap: 100
+  top_k: 5
+  index_path: "data/processed/faiss_index"
+  
+  keywords:
+    # Cancers cutanés et lésions malignes
+    skin_cancer:
+      - "melanoma"
+      - "malignant melanoma"
+      - "skin cancer"
+      - "basal cell carcinoma"
+      - "squamous cell carcinoma"
+      - "merkel cell carcinoma"
+      - "kaposi sarcoma"
+      - "cutaneous lymphoma"
+      - "mycosis fungoides"
+      
+    # Lésions bénignes et précancéreuses
+    benign_lesions:
+      - "nevus"
+      - "mole"
+      - "dysplastic nevus"
+      - "atypical nevus"
+      - "seborrheic keratosis"
+      - "actinic keratosis"
+      - "solar keratosis"
+      - "lentigo"
+      - "dermatofibroma"
+      - "hemangioma"
+      - "lipoma"
+      
+    # Diagnostic et caractéristiques
+    diagnostic:
+      - "dermatology"
+      - "dermoscopy"
+      - "dermatoscopy"
+      - "skin lesion"
+      - "cutaneous lesion"
+      - "pigmented lesion"
+      - "ABCDE criteria"
+      - "asymmetry"
+      - "border irregularity"
+      - "color variegation"
+      - "diameter"
+      - "evolution"
+      - "ugly duckling sign"
+      
+    # Caractéristiques morphologiques
+    morphology:
+      - "pigmentation"
+      - "hyperpigmentation"
+      - "hypopigmentation"
+      - "erythema"
+      - "scaling"
+      - "ulceration"
+      - "crusting"
+      - "nodule"
+      - "papule"
+      - "plaque"
+      - "macule"
+      - "patch"
+      - "vesicle"
+      - "bulla"
+      
+    # Pathologies inflammatoires et infectieuses
+    inflammatory:
+      - "eczema"
+      - "dermatitis"
+      - "psoriasis"
+      - "rosacea"
+      - "acne"
+      - "folliculitis"
+      - "cellulitis"
+      - "impetigo"
+      - "herpes"
+      - "varicella"
+      - "vitiligo"
+      - "alopecia"
+      
+    # Termes généraux dermatologiques
+    general:
+      - "cutaneous"
+      - "epidermal"
+      - "dermal"
+      - "subcutaneous"
+      - "skin biopsy"
+      - "histopathology"
+      - "excision"
+      - "cryotherapy"
+      - "phototherapy"
+      - "topical treatment"
+
+# OpenCV Configuration
+opencv:
+  max_image_dim: 1024
+  segmentation_clusters: 3
+  min_lesion_size: 500
+  n_colors: 4
+  pixels_per_mm: 10
+
+# Gradio Configuration
+gradio:
+  port: 7860
+  share: false
+  server_name: "0.0.0.0"
+  max_file_size: 10  # MB
+
+# Generation Parameters
+generation:
+  max_new_tokens: 1024
+  temperature: 0.5
+  do_sample: true
+  top_p: 0.9

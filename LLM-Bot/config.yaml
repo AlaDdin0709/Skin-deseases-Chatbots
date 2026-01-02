@@ -1,0 +1,132 @@
+# ============================================================================
+# LLM-Bot Configuration
+# ============================================================================
+
+# Model Configuration
+models:
+  llm:
+    name: "google/flan-t5-xl"
+    # Adaptateur médical LoRA (optionnel - améliore précision dermatologique)
+    use_medical_adapter: false
+    adapter_path: "data/models/lora-dermatology"
+    quantization:
+      load_in_8bit: true        # 8-bit pour 4GB VRAM
+      device_map: "auto"
+    torch_dtype: "float16"
+    max_memory: 
+      0: "4GB"  # GPU 0
+      "cpu": "16GB"
+  
+  embedding:
+    name: "sentence-transformers/all-MiniLM-L6-v2"
+    device: "cpu"
+
+# RAG Configuration
+rag:
+  dataset: "TimSchopf/medical_abstracts"
+  chunk_size: 500
+  chunk_overlap: 100
+  top_k: 5
+  index_path: "data/processed/faiss_index"
+  
+  keywords:
+    # Cancers cutanés et lésions malignes
+    skin_cancer:
+      - "melanoma"
+      - "malignant melanoma"
+      - "skin cancer"
+      - "basal cell carcinoma"
+      - "squamous cell carcinoma"
+      - "merkel cell carcinoma"
+      - "kaposi sarcoma"
+      - "cutaneous lymphoma"
+      - "mycosis fungoides"
+      
+    # Lésions bénignes et précancéreuses
+    benign_lesions:
+      - "nevus"
+      - "mole"
+      - "dysplastic nevus"
+      - "atypical nevus"
+      - "seborrheic keratosis"
+      - "actinic keratosis"
+      - "solar keratosis"
+      - "lentigo"
+      - "dermatofibroma"
+      - "hemangioma"
+      - "lipoma"
+      
+    # Diagnostic et caractéristiques
+    diagnostic:
+      - "dermatology"
+      - "dermoscopy"
+      - "dermatoscopy"
+      - "skin lesion"
+      - "cutaneous lesion"
+      - "pigmented lesion"
+      - "ABCDE criteria"
+      - "asymmetry"
+      - "border irregularity"
+      - "color variegation"
+      - "diameter"
+      - "evolution"
+      - "ugly duckling sign"
+      
+    # Caractéristiques morphologiques
+    morphology:
+      - "pigmentation"
+      - "hyperpigmentation"
+      - "hypopigmentation"
+      - "erythema"
+      - "scaling"
+      - "ulceration"
+      - "crusting"
+      - "nodule"
+      - "papule"
+      - "plaque"
+      - "macule"
+      - "patch"
+      - "vesicle"
+      - "bulla"
+      
+    # Pathologies inflammatoires et infectieuses
+    inflammatory:
+      - "eczema"
+      - "dermatitis"
+      - "psoriasis"
+      - "rosacea"
+      - "acne"
+      - "folliculitis"
+      - "cellulitis"
+      - "impetigo"
+      - "herpes"
+      - "varicella"
+      - "vitiligo"
+      - "alopecia"
+      
+    # Termes généraux dermatologiques
+    general:
+      - "cutaneous"
+      - "epidermal"
+      - "dermal"
+      - "subcutaneous"
+      - "skin biopsy"
+      - "histopathology"
+      - "excision"
+      - "cryotherapy"
+      - "phototherapy"
+      - "topical treatment"
+
+# Gradio Configuration
+gradio:
+  port: 7861
+  share: false
+  server_name: "0.0.0.0"
+  max_file_size: 2  # MB
+
+# Generation Parameters
+generation:
+  max_new_tokens: 512
+  temperature: 0.7
+  do_sample: true
+  top_p: 0.9
