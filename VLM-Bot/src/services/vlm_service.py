@@ -60,11 +60,15 @@ class VLMService:
         max_memory = {}
         if isinstance(self.config.get('max_memory'), dict):
             for k, v in self.config['max_memory'].items():
-                # Convertir "5GB" → "5GiB"
+                # La clé peut être un int (p.ex. 0) ou une string (p.ex. "0" or "cpu")
+                key = k
+                if isinstance(k, str) and k.isdigit():
+                    key = int(k)
+                # Convertir "5GB" → "5GiB" si besoin
                 if isinstance(v, str):
-                    max_memory[int(k) if k.isdigit() else k] = v.replace("GB", "GiB")
+                    max_memory[key] = v.replace("GB", "GiB")
                 else:
-                    max_memory[k] = v
+                    max_memory[key] = v
         
         try:
             logger.info("📦 Chargement avec quantization 4-bit...")
